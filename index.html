@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sealed Hat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#EFEDE7;
+  --card:#FBFAF7;
+  --ink:#171E27;
+  --ink-soft:#5E6772;
+  --rule:#DCD8CF;
+  --rule-soft:#E8E5DD;
+  --seal:#A8322C;
+  --seal-ink:#FBF7F2;
+  --air:#2C5D92;
+  --good:#2E6A4E;
+  --shadow:0 1px 0 rgba(23,30,39,.04), 0 12px 28px -18px rgba(23,30,39,.45);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#12161C;
+    --card:#1A1F27;
+    --ink:#E9E6DF;
+    --ink-soft:#98A1AC;
+    --rule:#2B323C;
+    --rule-soft:#232932;
+    --seal:#E0685E;
+    --seal-ink:#1A1F27;
+    --air:#86AEDC;
+    --good:#6FBF95;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#12161C;
+  --card:#1A1F27;
+  --ink:#E9E6DF;
+  --ink-soft:#98A1AC;
+  --rule:#2B323C;
+  --rule-soft:#232932;
+  --seal:#E0685E;
+  --seal-ink:#1A1F27;
+  --air:#86AEDC;
+  --good:#6FBF95;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 14px 30px -20px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  padding-inline:20px;
+  padding-block:36px 56px;
+}
+.sheet{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+
+h1,h2,h3{font-family:"Fraunces", Georgia, "Times New Roman", serif;font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,7vw,3.1rem);letter-spacing:-.015em}
+h2{font-size:1.45rem}
+h3{font-size:1.1rem}
+p{margin:0}
+
+.masthead{display:flex;flex-direction:column;gap:10px}
+.stripe{
+  height:9px;border-radius:1px;
+  background:repeating-linear-gradient(-45deg,
+    var(--seal) 0 9px, transparent 9px 18px, var(--air) 18px 27px, transparent 27px 36px);
+}
+.tagline{color:var(--ink-soft);max-width:54ch;font-size:1.02rem}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  box-shadow:var(--shadow);
+  padding:clamp(20px,4vw,30px);
+  display:flex;flex-direction:column;gap:26px;
+}
+
+.step{display:flex;flex-direction:column;gap:10px}
+.step-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.step-num{
+  font-family:"Space Mono",ui-monospace,monospace;font-size:.72rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--seal);
+  border:1px solid currentColor;border-radius:2px;padding:1px 6px;flex:none;
+}
+.hint{color:var(--ink-soft);font-size:.9rem;max-width:62ch}
+
+label{display:block}
+.label{
+  font-family:"Space Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;
+}
+input[type=text],textarea,select{
+  width:100%;font:inherit;color:var(--ink);background:var(--paper);
+  border:1px solid var(--rule);border-radius:2px;padding:9px 11px;
+}
+textarea{min-height:150px;resize:vertical;font-family:"Space Mono",ui-monospace,monospace;font-size:.92rem;line-height:1.7}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{
+  outline:2px solid var(--air);outline-offset:2px;
+}
+
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1 1 180px;min-width:0}
+.rule-picker{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.rule-picker>label{flex:1 1 150px}
+.between{font-size:.85rem;color:var(--ink-soft);padding-bottom:10px;font-family:"Space Mono",monospace}
+
+button{font:inherit;cursor:pointer;border-radius:2px;border:1px solid transparent}
+.btn{
+  background:var(--ink);color:var(--card);border-color:var(--ink);
+  padding:11px 20px;font-weight:600;letter-spacing:.01em;
+}
+.btn:hover{opacity:.88}
+.btn.seal{background:var(--seal);border-color:var(--seal);color:var(--seal-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--ink);opacity:1}
+.btn.small{padding:7px 13px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:"Space Mono",ui-monospace,monospace;font-size:.82rem;
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:5px 6px 5px 10px;
+}
+.chip button{background:none;color:var(--ink-soft);padding:0 4px;font-size:1rem;line-height:1}
+.chip button:hover{color:var(--seal)}
+.empty-note{color:var(--ink-soft);font-size:.9rem;font-style:italic}
+
+.divider{height:1px;background:var(--rule-soft);border:0;margin:0}
+
+.example-flag{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  background:var(--paper);border:1px dashed var(--rule);border-radius:2px;padding:9px 12px;
+  font-size:.86rem;color:var(--ink-soft);
+}
+
+.alert{
+  border-left:3px solid var(--seal);background:var(--paper);
+  padding:11px 14px;font-size:.9rem;border-radius:0 2px 2px 0;
+}
+.alert.quiet{border-left-color:var(--air)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.tab{
+  background:none;color:var(--ink-soft);padding:9px 14px;font-weight:600;font-size:.94rem;
+  border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:2px 2px 0 0;
+}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--seal)}
+
+.names-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.name-btn{
+  background:var(--paper);border:1px solid var(--rule);color:var(--ink);
+  padding:14px;text-align:left;font-weight:600;font-size:1rem;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.name-btn:hover:not(:disabled){border-color:var(--ink)}
+.name-btn .state{font-family:"Space Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.name-btn.done{color:var(--ink-soft);background:transparent;border-style:dashed}
+.name-btn.done .state{color:var(--good)}
+
+.send-list{display:flex;flex-direction:column}
+.send-row{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:13px 0;border-bottom:1px solid var(--rule-soft);
+}
+.send-row:last-child{border-bottom:0}
+.send-row .who{flex:1 1 120px;font-weight:600}
+.send-row .state{font-family:"Space Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--good)}
+.send-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.copybox{width:100%;min-height:96px;font-family:"Space Mono",monospace;font-size:.82rem}
+
+footer{color:var(--ink-soft);font-size:.86rem;display:flex;flex-direction:column;gap:8px;max-width:64ch}
+
+#reveal{
+  position:fixed;inset:0;z-index:50;background:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px 20px;overflow-y:auto;
+}
+.env{
+  position:relative;width:min(460px,100%);
+  background:var(--card);border:1px solid var(--rule);
+  padding:44px 30px 34px;text-align:center;
+  box-shadow:var(--shadow);
+  animation:lift .45s cubic-bezier(.2,.8,.3,1) both;
+}
+.env::before,.env::after{
+  content:"";position:absolute;left:0;right:0;height:12px;
+  background:radial-gradient(circle at 6px 6px, var(--paper) 5.2px, transparent 5.6px) repeat-x;
+  background-size:12px 12px;
+}
+.env::before{top:-6px}
+.env::after{bottom:-6px;transform:rotate(180deg)}
+.wax{
+  position:absolute;top:-20px;left:50%;translate:-50% 0;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--seal);color:var(--seal-ink);
+  display:grid;place-items:center;
+  font-family:"Fraunces",serif;font-size:1.4rem;font-weight:700;
+  rotate:-6deg;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
+}
+.env .eyebrow{
+  font-family:"Space Mono",monospace;font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.env .lead{color:var(--ink-soft);margin-top:18px;font-size:.98rem}
+.env .target{
+  font-family:"Fraunces",serif;font-weight:700;font-size:clamp(2.1rem,9vw,3rem);
+  line-height:1.1;margin:6px 0 0;text-wrap:balance;
+  animation:rise .5s .12s cubic-bezier(.2,.8,.3,1) both;
+}
+.env .note{
+  margin-top:20px;padding-top:16px;border-top:1px solid var(--rule-soft);
+  font-size:.9rem;color:var(--ink-soft);display:flex;flex-direction:column;gap:3px;
+}
+.env .actions{margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hidden-name{filter:blur(14px);user-select:none}
+@keyframes lift{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet">
+
+  <header class="masthead">
+    <div class="stripe" aria-hidden="true"></div>
+    <h1>Sealed Hat</h1>
+    <p class="tagline">A Secret Santa draw where only the giver ever sees their name &mdash; you included, even though you're the one running it.</p>
+  </header>
+
+  <section class="card" id="setup">
+    <div class="example-flag" id="exampleFlag">
+      <span>Filled in with an example household so you can see how it works.</span>
+      <button class="btn ghost small" type="button" id="clearExample">Clear it</button>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">Step 1</span>
+        <h2>Who's in the hat</h2>
+      </div>
+      <p class="hint">One name per line. Three people minimum.</p>
+      <label>
+        <span class="label" id="namesCount">6 names</span>
+        <textarea id="names" spellcheck="false" aria-labelledby="namesCount">Mum
+Dad
+Rosa
+Theo
+Nina
+Ben</textarea>
+      </label>
+    </div>
+
+    <hr class="divider">
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">Step 2</span>
+        <h2>Who can't draw who</h2>
+      </div>
+      <p class="hint">Couples, housemates, anyone who already buys for each other. Each rule blocks the pairing in both directions.</p>
+      <div class="rule-picker">
+        <label><span class="label">Person</span><select id="pairA"></select></label>
+        <span class="between" aria-hidden="true">and</span>
+        <label><span class="label">Person</span><select id="pairB"></select></label>
+        <button class="btn ghost small" type="button" id="addPair">Add rule</button>
+      </div>
+      <div class="chips" id="pairChips"></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">Step 3</span>
+        <h2>What goes in the envelope</h2>
+      </div>
+      <p class="hint">Optional. Everyone sees this alongside their name.</p>
+      <div class="row">
+        <label><span class="label">Budget</span><input type="text" id="budget" value="&pound;20" placeholder="&pound;20"></label>
+        <label><span class="label">Where and when</span><input type="text" id="occasion" value="Christmas Day at Mum's" placeholder="Christmas Day at Mum's"></label>
+      </div>
+    </div>
+
+    <div id="setupError" role="alert"></div>
+
+    <div>
+      <button class="btn seal" type="button" id="drawBtn">Shuffle the hat</button>
+    </div>
+  </section>
+
+  <section class="card" id="results" hidden>
+    <div class="step">
+      <h2 id="resultsTitle">The hat is sealed</h2>
+      <p class="hint" id="resultsSub"></p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="How to hand out the names">
+      <button class="tab" role="tab" id="tabPass" aria-selected="true" aria-controls="panelPass" type="button">Everyone's in the room</button>
+      <button class="tab" role="tab" id="tabSend" aria-selected="false" aria-controls="panelSend" type="button">They're somewhere else</button>
+    </div>
+
+    <div id="panelPass" role="tabpanel" aria-labelledby="tabPass" class="step">
+      <p class="hint">Hand the phone round. Each person taps their own name, reads it, and taps <em>Done</em>. Once a name has been read it can't be opened again &mdash; not by them, not by you.</p>
+      <div class="names-grid" id="passGrid"></div>
+      <p class="hint" id="passStatus" aria-live="polite"></p>
+    </div>
+
+    <div id="panelSend" role="tabpanel" aria-labelledby="tabSend" class="step" hidden>
+      <div class="alert">Don't open these links yourself. Each one reveals a name the moment it's opened, and the one you'd spoil is your own surprise.</div>
+      <p class="hint">Copy each person's message straight into your messages app. Nothing on this screen tells you what's inside.</p>
+      <div id="fileWarning"></div>
+      <div class="send-list" id="sendList"></div>
+      <div id="copyFallback"></div>
+    </div>
+
+    <hr class="divider">
+    <div>
+      <button class="btn ghost small" type="button" id="startOver">Start over</button>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>How it stays secret.</strong> The draw runs in this browser and is never sent anywhere. There's no account, no database and no organiser's list &mdash; the only copy of a name lives inside that person's own link, scrambled until it's opened.</p>
+    <p id="footNote"></p>
+  </footer>
+</div>
+
+<div id="reveal" hidden>
+  <div class="env" id="envelope">
+    <div class="wax" id="wax" aria-hidden="true">S</div>
+    <p class="eyebrow" id="envFor">For you</p>
+    <p class="lead" id="envLead">You're buying for</p>
+    <p class="target" id="envTarget">&nbsp;</p>
+    <div class="note" id="envNote" hidden></div>
+    <div class="actions" id="envActions"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(sel){ return document.querySelector(sel); };
+  var SEP = String.fromCharCode(0);
+
+  /* ---- scrambling: a random key travels with the ciphertext, so a link
+     is unreadable as text but opens for whoever actually clicks it ---- */
+  function b64url(bytes){
+    var s = "", i;
+    for(i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function unb64url(str){
+    str = String(str).replace(/-/g, "+").replace(/_/g, "/");
+    while(str.length % 4) str += "=";
+    var s = atob(str), out = new Uint8Array(s.length), i;
+    for(i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+    return out;
+  }
+  function keystream(key, len){
+    var dv = new DataView(key.buffer, key.byteOffset, 16);
+    var a = dv.getUint32(0) || 0x9e3779b9, b = dv.getUint32(4) || 0x85ebca6b,
+        c = dv.getUint32(8) || 0xc2b2ae35, d = dv.getUint32(12) || 0x27d4eb2f;
+    var out = new Uint8Array(len), i, t;
+    for(i = 0; i < len; i++){
+      t = (a ^ (a << 11)) >>> 0;
+      a = b; b = c; c = d;
+      d = ((d ^ (d >>> 19)) ^ (t ^ (t >>> 8))) >>> 0;
+      out[i] = d & 255;
+    }
+    return out;
+  }
+  function seal(obj){
+    var key = new Uint8Array(16);
+    crypto.getRandomValues(key);
+    var data = new TextEncoder().encode(JSON.stringify(obj));
+    var ks = keystream(key, data.length), out = new Uint8Array(data.length), i;
+    for(i = 0; i < data.length; i++) out[i] = data[i] ^ ks[i];
+    return b64url(key) + "." + b64url(out);
+  }
+  function unseal(token){
+    var parts = String(token).split(".");
+    if(parts.length !== 2) throw new Error("bad token");
+    var key = unb64url(parts[0]), ct = unb64url(parts[1]);
+    if(key.length !== 16) throw new Error("bad key");
+    var ks = keystream(key, ct.length), out = new Uint8Array(ct.length), i;
+    for(i = 0; i < ct.length; i++) out[i] = ct[i] ^ ks[i];
+    return JSON.parse(new TextDecoder().decode(out));
+  }
+
+  /* ---- unbiased randomness ---- */
+  function rnd(n){
+    var limit = Math.floor(4294967296 / n) * n, buf = new Uint32Array(1), v;
+    do { crypto.getRandomValues(buf); v = buf[0]; } while(v >= limit);
+    return v % n;
+  }
+  function shuffle(arr){
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = rnd(i + 1), t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  /* ---- the draw: one closed loop, so nobody draws themselves and the
+     group never splits into two little cliques buying among themselves ---- */
+  function drawNames(names, pairs){
+    var banned = {}, i;
+    for(i = 0; i < pairs.length; i++){
+      banned[pairs[i][0] + SEP + pairs[i][1]] = true;
+      banned[pairs[i][1] + SEP + pairs[i][0]] = true;
+    }
+    var n = names.length;
+    for(var attempt = 0; attempt < 40000; attempt++){
+      var order = shuffle(names.slice()), ok = true, map = {};
+      for(i = 0; i < n; i++){
+        var giver = order[i], receiver = order[(i + 1) % n];
+        if(banned[giver + SEP + receiver]){ ok = false; break; }
+        map[giver] = receiver;
+      }
+      if(ok) return map;
+    }
+    return null;
+  }
+
+  var state = { names: [], pairs: [], budget: "", occasion: "", assign: null, seen: {}, sent: {} };
+
+  var namesEl = $("#names"), pairA = $("#pairA"), pairB = $("#pairB");
+
+  function parseNames(){
+    var seen = {}, out = [];
+    namesEl.value.split("\n").forEach(function(line){
+      var name = line.trim().replace(/\s+/g, " ");
+      if(!name) return;
+      var key = name.toLowerCase();
+      if(seen[key]) return;
+      seen[key] = true;
+      out.push(name);
+    });
+    return out;
+  }
+
+  function refreshSetup(){
+    var names = parseNames();
+    $("#namesCount").textContent = names.length === 1 ? "1 name" : names.length + " names";
+    var live = {}, i;
+    for(i = 0; i < names.length; i++) live[names[i]] = true;
+    state.pairs = state.pairs.filter(function(p){ return live[p[0]] && live[p[1]]; });
+    [pairA, pairB].forEach(function(sel){
+      var prev = sel.value;
+      sel.innerHTML = "";
+      names.forEach(function(name){
+        var opt = document.createElement("option");
+        opt.value = name; opt.textContent = name;
+        sel.appendChild(opt);
+      });
+      if(live[prev]) sel.value = prev;
+    });
+    if(names.length > 1 && pairB.value === pairA.value) pairB.selectedIndex = 1;
+    renderPairs();
+  }
+
+  function renderPairs(){
+    var box = $("#pairChips");
+    box.innerHTML = "";
+    if(!state.pairs.length){
+      var note = document.createElement("p");
+      note.className = "empty-note";
+      note.textContent = "No rules yet, so everyone can draw everyone.";
+      box.appendChild(note);
+      return;
+    }
+    state.pairs.forEach(function(pair, idx){
+      var chip = document.createElement("span");
+      chip.className = "chip";
+      chip.appendChild(document.createTextNode(pair[0] + " ⇄ " + pair[1]));
+      var x = document.createElement("button");
+      x.type = "button";
+      x.setAttribute("aria-label", "Remove rule " + pair[0] + " and " + pair[1]);
+      x.textContent = "×";
+      x.addEventListener("click", function(){ state.pairs.splice(idx, 1); renderPairs(); });
+      chip.appendChild(x);
+      box.appendChild(chip);
+    });
+  }
+
+  function showSetupError(msg){
+    var box = $("#setupError");
+    box.innerHTML = "";
+    if(!msg) return;
+    var div = document.createElement("div");
+    div.className = "alert";
+    div.textContent = msg;
+    box.appendChild(div);
+  }
+
+  namesEl.addEventListener("input", function(){ refreshSetup(); showSetupError(""); });
+
+  $("#clearExample").addEventListener("click", function(){
+    namesEl.value = "";
+    state.pairs = [];
+    $("#budget").value = "";
+    $("#occasion").value = "";
+    $("#exampleFlag").hidden = true;
+    refreshSetup();
+    namesEl.focus();
+  });
+
+  $("#addPair").addEventListener("click", function(){
+    var a = pairA.value, b = pairB.value;
+    if(!a || !b) return;
+    if(a === b){ showSetupError("Pick two different people for a rule."); return; }
+    var exists = state.pairs.some(function(p){
+      return (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a);
+    });
+    if(exists){ showSetupError("That rule is already in the list."); return; }
+    state.pairs.push([a, b]);
+    showSetupError("");
+    renderPairs();
+  });
+
+  $("#drawBtn").addEventListener("click", function(){
+    var names = parseNames();
+    if(names.length < 3){
+      showSetupError("Add at least three names. With two people it isn't a secret.");
+      return;
+    }
+    var result = drawNames(names, state.pairs);
+    if(!result){
+      showSetupError("No draw works with those rules. That usually means the rules are too tight for the size of the group. Try removing one, or adding another person.");
+      return;
+    }
+    showSetupError("");
+    state.names = names;
+    state.assign = result;
+    state.seen = {};
+    state.sent = {};
+    state.budget = $("#budget").value.trim();
+    state.occasion = $("#occasion").value.trim();
+    $("#resultsTitle").textContent = "The hat is sealed";
+    $("#tabSend").disabled = false;
+    $("#setup").hidden = true;
+    $("#results").hidden = false;
+    $("#resultsSub").textContent = names.length + " envelopes, all of them shut. Nothing on this screen says who got who.";
+    selectTab("pass");
+    renderPass();
+    renderSend();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  $("#startOver").addEventListener("click", function(){
+    state.assign = null; state.seen = {}; state.sent = {};
+    $("#results").hidden = true;
+    $("#setup").hidden = false;
+    $("#copyFallback").innerHTML = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  function selectTab(which){
+    var pass = which === "pass";
+    $("#tabPass").setAttribute("aria-selected", String(pass));
+    $("#tabSend").setAttribute("aria-selected", String(!pass));
+    $("#panelPass").hidden = !pass;
+    $("#panelSend").hidden = pass;
+  }
+  $("#tabPass").addEventListener("click", function(){ selectTab("pass"); });
+  $("#tabSend").addEventListener("click", function(){ selectTab("send"); });
+
+  /* ---- pass the phone round ---- */
+  function renderPass(){
+    var grid = $("#passGrid");
+    grid.innerHTML = "";
+    state.names.forEach(function(name){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "name-btn" + (state.seen[name] ? " done" : "");
+      btn.disabled = !!state.seen[name] || !state.assign;
+      var who = document.createElement("span");
+      who.textContent = name;
+      var tag = document.createElement("span");
+      tag.className = "state";
+      tag.textContent = state.seen[name] ? "read" : "tap";
+      btn.appendChild(who); btn.appendChild(tag);
+      btn.addEventListener("click", function(){ openReveal(name, state.assign[name], "pass"); });
+      grid.appendChild(btn);
+    });
+    var left = state.names.filter(function(n){ return !state.seen[n]; }).length;
+    $("#passStatus").textContent = !state.assign
+      ? "The hat is empty. Everyone has read their own name and nothing was kept."
+      : (left === 0 ? "" : left + " still to go.");
+  }
+
+  function markSeen(name){
+    state.seen[name] = true;
+    var allSeen = state.names.every(function(n){ return state.seen[n]; });
+    if(allSeen){
+      state.assign = null;
+      $("#resultsTitle").textContent = "The hat is empty";
+      $("#resultsSub").textContent = "Everyone has read their own name and nothing was written down.";
+      $("#tabSend").disabled = true;
+      $("#sendList").innerHTML = "";
+      selectTab("pass");
+    }
+    renderPass();
+  }
+
+  /* ---- send a link each ---- */
+  function linkFor(name){
+    var base = location.href.split("#")[0];
+    var payload = { v: 1, g: name, r: state.assign[name] };
+    if(state.budget) payload.b = state.budget;
+    if(state.occasion) payload.o = state.occasion;
+    return base + "#a=" + seal(payload);
+  }
+
+  function messageFor(name){
+    var lines = [
+      name + " — your Secret Santa 🎁",
+      "Open this link and it'll tell you who you're buying for. It's yours alone, so don't forward it.",
+      linkFor(name)
+    ];
+    var extras = [];
+    if(state.budget) extras.push("Budget: " + state.budget);
+    if(state.occasion) extras.push(state.occasion);
+    if(extras.length) lines.push(extras.join(" · "));
+    return lines.join("\n\n");
+  }
+
+  function manualCopy(text){
+    var box = $("#copyFallback");
+    box.innerHTML = "";
+    var p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = "This browser wouldn't let the page reach the clipboard. Select the text below and copy it yourself.";
+    var ta = document.createElement("textarea");
+    ta.className = "copybox";
+    ta.value = text;
+    ta.readOnly = true;
+    box.appendChild(p); box.appendChild(ta);
+    ta.focus(); ta.select();
+  }
+
+  function copyText(text, onDone){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        $("#copyFallback").innerHTML = "";
+        onDone();
+      }, function(){ manualCopy(text); onDone(); });
+    } else {
+      manualCopy(text);
+      onDone();
+    }
+  }
+
+  function renderSend(){
+    var list = $("#sendList");
+    list.innerHTML = "";
+    if(!state.assign) return;
+
+    state.names.forEach(function(name){
+      var row = document.createElement("div");
+      row.className = "send-row";
+
+      var who = document.createElement("span");
+      who.className = "who";
+      who.textContent = name;
+
+      var status = document.createElement("span");
+      status.className = "state";
+      status.textContent = state.sent[name] ? "copied" : "";
+
+      var actions = document.createElement("span");
+      actions.className = "send-actions";
+
+      var msgBtn = document.createElement("button");
+      msgBtn.type = "button";
+      msgBtn.className = "btn small";
+      msgBtn.textContent = "Copy message";
+      msgBtn.addEventListener("click", function(){
+        copyText(messageFor(name), function(){
+          state.sent[name] = true;
+          status.textContent = "copied";
+          msgBtn.textContent = "Copy again";
+        });
+      });
+
+      var linkBtn = document.createElement("button");
+      linkBtn.type = "button";
+      linkBtn.className = "btn ghost small";
+      linkBtn.textContent = "Link only";
+      linkBtn.addEventListener("click", function(){
+        copyText(linkFor(name), function(){
+          state.sent[name] = true;
+          status.textContent = "copied";
+        });
+      });
+
+      actions.appendChild(msgBtn); actions.appendChild(linkBtn);
+      row.appendChild(who); row.appendChild(status); row.appendChild(actions);
+      list.appendChild(row);
+    });
+
+    var warn = $("#fileWarning");
+    warn.innerHTML = "";
+    if(location.protocol === "file:"){
+      var div = document.createElement("div");
+      div.className = "alert quiet";
+      div.textContent = "This page is open from a file on your own computer, so these links will only work here. Put it on the web first if you need to send them to other people.";
+      warn.appendChild(div);
+    }
+  }
+
+  /* ---- the envelope ---- */
+  function openReveal(giver, receiver, mode, extra){
+    if(!receiver) return;
+    $("#wax").textContent = (receiver.charAt(0) || "S").toUpperCase();
+    $("#envFor").textContent = mode === "pass" ? "For " + giver + ", nobody else" : "For " + giver;
+    $("#envLead").textContent = "You're buying for";
+    $("#envTarget").textContent = receiver;
+    $("#envTarget").classList.remove("hidden-name");
+
+    var note = $("#envNote");
+    note.innerHTML = "";
+    var bits = [];
+    if(mode === "pass"){
+      if(state.budget) bits.push("Budget: " + state.budget);
+      if(state.occasion) bits.push(state.occasion);
+    } else if(extra){
+      if(extra.budget) bits.push("Budget: " + extra.budget);
+      if(extra.occasion) bits.push(extra.occasion);
+    }
+    bits.forEach(function(text){
+      var line = document.createElement("span");
+      line.textContent = text;
+      note.appendChild(line);
+    });
+    note.hidden = bits.length === 0;
+
+    var actions = $("#envActions");
+    actions.innerHTML = "";
+    if(mode === "pass"){
+      var done = document.createElement("button");
+      done.type = "button";
+      done.className = "btn seal";
+      done.textContent = "Done, pass it on";
+      done.addEventListener("click", function(){
+        $("#reveal").hidden = true;
+        $("#sheet").hidden = false;
+        markSeen(giver);
+      });
+      actions.appendChild(done);
+      window.setTimeout(function(){ done.focus(); }, 60);
+    } else {
+      var hidden = false;
+      var hide = document.createElement("button");
+      hide.type = "button";
+      hide.className = "btn ghost";
+      hide.textContent = "Hide it";
+      hide.addEventListener("click", function(){
+        hidden = !hidden;
+        $("#envTarget").classList.toggle("hidden-name", hidden);
+        hide.textContent = hidden ? "Show it again" : "Hide it";
+      });
+      actions.appendChild(hide);
+    }
+
+    $("#sheet").hidden = true;
+    $("#reveal").hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  function showBrokenLink(){
+    $("#sheet").hidden = true;
+    $("#reveal").hidden = false;
+    $("#wax").textContent = "?";
+    $("#envFor").textContent = "Hmm";
+    $("#envLead").textContent = "This link didn't open";
+    var target = $("#envTarget");
+    target.textContent = "It looks cut short";
+    target.style.fontSize = "1.7rem";
+    var note = $("#envNote");
+    note.hidden = false;
+    note.textContent = "Messaging apps sometimes chop long links in half. Ask whoever sent it to copy the whole thing across again.";
+  }
+
+  var frag = location.hash.replace(/^#/, "");
+  if(frag.indexOf("a=") === 0){
+    try{
+      var payload = unseal(decodeURIComponent(frag.slice(2)));
+      if(!payload || !payload.r) throw new Error("empty");
+      openReveal(payload.g || "you", payload.r, "link", { budget: payload.b, occasion: payload.o });
+    } catch(err){
+      showBrokenLink();
+    }
+  } else {
+    refreshSetup();
+    $("#footNote").textContent = "Works on a phone, works offline, works from a file on a memory stick. Nothing is saved between visits, so hand the names out before you close the page.";
+  }
+})();
+</script>
+</body>
+</html>

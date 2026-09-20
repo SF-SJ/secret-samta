@@ -54,7 +54,12 @@
 }
 
 *{box-sizing:border-box}
+/* Author rules beat the UA stylesheet whatever their specificity, so a plain
+   [hidden] loses to any display: we set. Without this, every hidden panel -
+   the results card, the envelope overlay - paints on top of the setup form. */
+[hidden]{display:none !important}
 body{
+  margin:0;
   background:var(--paper);
   color:var(--ink);
   font-family:"Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
